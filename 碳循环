@@ -1,0 +1,448 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/index.html b/index.html
+index 4ee0b7ee9471864765ba39b6abfa397c7c39cd17..eb4887f43b725f53a76df49988aab8442ccd6e77 100644
+--- a/index.html
++++ b/index.html
+@@ -1,136 +1,302 @@
+-<!DOCTYPE html>
+-<html lang="zh">
+-<head>
+-<meta charset="UTF-8">
+-<title>BMI & 减脂计算器</title>
+-
+-<style>
+-body {
+-  font-family: Arial, sans-serif;
+-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+-  display: flex;
+-  justify-content: center;
+-  padding: 40px;
+-}
+-
+-.container {
+-  background: white;
+-  padding: 30px;
+-  border-radius: 15px;
+-  width: 400px;
+-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+-}
+-
+-h1 {
+-  text-align: center;
+-}
+-
+-label {
+-  display: block;
+-  margin-top: 10px;
+-}
+-
+-input, select {
+-  width: 100%;
+-  padding: 8px;
+-  margin-top: 5px;
+-  border-radius: 8px;
+-  border: 1px solid #ccc;
+-}
+-
+-button {
+-  width: 100%;
+-  padding: 10px;
+-  margin-top: 15px;
+-  border: none;
+-  border-radius: 10px;
+-  background: #4facfe;
+-  color: white;
+-  font-size: 16px;
+-  cursor: pointer;
+-}
+-
+-button:hover {
+-  background: #00c6ff;
+-}
+-
+-.result {
+-  margin-top: 20px;
+-  font-weight: bold;
+-}
+-</style>
+-</head>
+-
+-<body>
+-
+-<div class="container">
+-<h1>BMI & 减脂管理工具</h1>
+-
+-<label>身高 (cm)
+-<input id="height" type="number" />
+-</label>
+-
+-<label>当前体重 (kg)
+-<input id="weight" type="number" />
+-</label>
+-
+-<label>目标体重 (kg)
+-<input id="targetWeight" type="number" />
+-</label>
+-
+-<label>年龄
+-<input id="age" type="number" />
+-</label>
+-
+-<label>性别
+-<select id="gender">
+-  <option value="male">男</option>
+-  <option value="female">女</option>
+-</select>
+-</label>
+-
+-<button onclick="calculate()">开始计算</button>
+-
+-<div class="result" id="result"></div>
+-</div>
+-
+-<script>
+-function calculate() {
+-  const height = parseFloat(document.getElementById("height").value);
+-  const weight = parseFloat(document.getElementById("weight").value);
+-  const targetWeight = parseFloat(document.getElementById("targetWeight").value);
+-  const age = parseFloat(document.getElementById("age").value);
+-  const gender = document.getElementById("gender").value;
+-
+-  if (!height || !weight || !targetWeight || !age) {
+-    document.getElementById("result").innerText = "请填写完整信息";
+-    return;
+-  }
+-
+-  const bmi = weight / ((height / 100) ** 2);
+-
+-  let bmr;
+-  if (gender === "male") {
+-    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+-  } else {
+-    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+-  }
+-
+-  const maintenanceCalories = bmr * 1.55;
+-  const deficitCalories = maintenanceCalories - 500;
+-
+-  const weightToLose = weight - targetWeight;
+-  const totalCaloriesNeeded = weightToLose * 7700;
+-  const daysNeeded = totalCaloriesNeeded / 500;
+-
+-  document.getElementById("result").innerHTML =
+-    "BMI: " + bmi.toFixed(1) + "<br>" +
+-    "维持热量: " + Math.round(maintenanceCalories) + " kcal<br>" +
+-    "建议每日摄入: " + Math.round(deficitCalories) + " kcal<br>" +
+-    "需要减重: " + weightToLose.toFixed(1) + " kg<br>" +
+-    "预计天数: " + Math.round(daysNeeded) + " 天";
+-}
+-</script>
+-
+-</body>
+-</html>
+\ No newline at end of file
++<!DOCTYPE html>
++<html lang="zh-CN">
++<head>
++<meta charset="UTF-8" />
++<meta name="viewport" content="width=device-width, initial-scale=1.0" />
++<title>BMI & 减脂计算器</title>
++<style>
++  :root {
++    color-scheme: light;
++  }
++
++  * {
++    box-sizing: border-box;
++  }
++
++  body {
++    margin: 0;
++    font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
++    background: linear-gradient(135deg, #4facfe, #00f2fe);
++    min-height: 100vh;
++    display: flex;
++    justify-content: center;
++    align-items: flex-start;
++    padding: 32px 16px;
++  }
++
++  .container {
++    background: #fff;
++    padding: 26px;
++    border-radius: 16px;
++    width: min(100%, 760px);
++    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
++  }
++
++  h1 {
++    margin-top: 0;
++    margin-bottom: 18px;
++    text-align: center;
++    font-size: 26px;
++  }
++
++  .form-grid {
++    display: grid;
++    gap: 12px;
++    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
++  }
++
++  label {
++    display: block;
++    font-size: 14px;
++    color: #333;
++  }
++
++  input,
++  select {
++    width: 100%;
++    margin-top: 6px;
++    padding: 9px 10px;
++    border-radius: 8px;
++    border: 1px solid #c9d1de;
++    font-size: 15px;
++  }
++
++  button {
++    margin-top: 16px;
++    width: 100%;
++    border: none;
++    border-radius: 10px;
++    background: #4facfe;
++    color: #fff;
++    font-size: 16px;
++    font-weight: 600;
++    padding: 11px;
++    cursor: pointer;
++  }
++
++  button:hover {
++    background: #1f95fa;
++  }
++
++  .result {
++    margin-top: 18px;
++    padding: 14px;
++    border-radius: 10px;
++    background: #f3f8ff;
++    border: 1px solid #dbeafe;
++    line-height: 1.7;
++  }
++
++  .result h2 {
++    margin-top: 0;
++    margin-bottom: 8px;
++    font-size: 18px;
++  }
++
++  table {
++    width: 100%;
++    border-collapse: collapse;
++    margin-top: 8px;
++    background: #fff;
++  }
++
++  th,
++  td {
++    border: 1px solid #dde4f0;
++    padding: 8px;
++    text-align: center;
++    font-size: 14px;
++  }
++
++  th {
++    background: #eaf2ff;
++  }
++
++  .muted {
++    color: #5a677a;
++    font-size: 13px;
++    margin-top: 8px;
++  }
++</style>
++</head>
++<body>
++  <div class="container">
++    <h1>BMI & 减脂工具（含胚型与碳循环）</h1>
++
++    <div class="form-grid">
++      <label>身高 (cm)
++        <input id="height" type="number" min="100" max="250" step="0.1" />
++      </label>
++
++      <label>当前体重 (kg)
++        <input id="weight" type="number" min="25" max="300" step="0.1" />
++      </label>
++
++      <label>目标体重 (kg)
++        <input id="targetWeight" type="number" min="25" max="300" step="0.1" />
++      </label>
++
++      <label>年龄
++        <input id="age" type="number" min="12" max="100" />
++      </label>
++
++      <label>性别
++        <select id="gender">
++          <option value="male">男</option>
++          <option value="female">女</option>
++        </select>
++      </label>
++
++      <label>活动水平
++        <select id="activity">
++          <option value="1.2">久坐（几乎不运动）</option>
++          <option value="1.375">轻活动（每周1-3次）</option>
++          <option value="1.55" selected>中等活动（每周3-5次）</option>
++          <option value="1.725">高活动（每周6-7次）</option>
++          <option value="1.9">非常高（体力工作+训练）</option>
++        </select>
++      </label>
++
++      <label>胚型选择
++        <select id="somatotype">
++          <option value="ectomorph">外胚型（偏瘦，代谢快）</option>
++          <option value="mesomorph" selected>中胚型（均衡，增肌减脂都较快）</option>
++          <option value="endomorph">内胚型（易囤脂，代谢相对慢）</option>
++        </select>
++      </label>
++    </div>
++
++    <button onclick="calculate()">开始计算</button>
++
++    <div class="result" id="result">请填写数据后点击“开始计算”。</div>
++  </div>
++
++<script>
++function getBmiLevel(bmi) {
++  if (bmi < 18.5) return "偏瘦";
++  if (bmi < 24) return "正常";
++  if (bmi < 28) return "超重";
++  return "肥胖";
++}
++
++function calculate() {
++  const height = parseFloat(document.getElementById("height").value);
++  const weight = parseFloat(document.getElementById("weight").value);
++  const targetWeight = parseFloat(document.getElementById("targetWeight").value);
++  const age = parseFloat(document.getElementById("age").value);
++  const gender = document.getElementById("gender").value;
++  const activity = parseFloat(document.getElementById("activity").value);
++  const somatotype = document.getElementById("somatotype").value;
++
++  if (!height || !weight || !targetWeight || !age || !activity) {
++    document.getElementById("result").textContent = "请填写完整且有效的信息。";
++    return;
++  }
++
++  if (targetWeight >= weight) {
++    document.getElementById("result").textContent = "目标体重需要小于当前体重，才是减脂计划。";
++    return;
++  }
++
++  const bmi = weight / ((height / 100) ** 2);
++  const bmiLevel = getBmiLevel(bmi);
++
++  const bmr = gender === "male"
++    ? 10 * weight + 6.25 * height - 5 * age + 5
++    : 10 * weight + 6.25 * height - 5 * age - 161;
++
++  const maintenanceCalories = bmr * activity;
++
++  const deficitRatioByType = {
++    ectomorph: 0.12,
++    mesomorph: 0.17,
++    endomorph: 0.22
++  };
++
++  const deficitCalories = maintenanceCalories * (1 - deficitRatioByType[somatotype]);
++
++  const carbCycleByType = {
++    ectomorph: [0.45, 0.40, 0.35],
++    mesomorph: [0.40, 0.32, 0.25],
++    endomorph: [0.32, 0.24, 0.18]
++  };
++
++  const proteinPerKgByType = {
++    ectomorph: 1.8,
++    mesomorph: 2.0,
++    endomorph: 2.2
++  };
++
++  const fatFloorRatioByType = {
++    ectomorph: 0.22,
++    mesomorph: 0.25,
++    endomorph: 0.30
++  };
++
++  const [highRatio, midRatio, lowRatio] = carbCycleByType[somatotype];
++  const proteinGram = weight * proteinPerKgByType[somatotype];
++  const proteinCalories = proteinGram * 4;
++  const fatFloorCalories = deficitCalories * fatFloorRatioByType[somatotype];
++
++  const weeklyPlan = [
++    { day: "周一（高碳）", ratio: highRatio },
++    { day: "周二（中碳）", ratio: midRatio },
++    { day: "周三（低碳）", ratio: lowRatio },
++    { day: "周四（高碳）", ratio: highRatio },
++    { day: "周五（中碳）", ratio: midRatio },
++    { day: "周六（低碳）", ratio: lowRatio },
++    { day: "周日（低碳）", ratio: lowRatio }
++  ];
++
++  const rows = weeklyPlan.map((item) => {
++    const dailyCalories = deficitCalories;
++    const carbCalories = dailyCalories * item.ratio;
++    const carbGram = carbCalories / 4;
++    const fatCalories = Math.max(dailyCalories - carbCalories - proteinCalories, fatFloorCalories);
++    const fatGram = fatCalories / 9;
++    return `
++      <tr>
++        <td>${item.day}</td>
++        <td>${Math.round(dailyCalories)} kcal</td>
++        <td>${Math.round(item.ratio * 100)}%</td>
++        <td>${Math.round(carbGram)} g</td>
++        <td>${Math.round(proteinGram)} g</td>
++        <td>${Math.round(fatGram)} g</td>
++      </tr>`;
++  }).join("");
++
++  const weightToLose = weight - targetWeight;
++  const totalCaloriesNeeded = weightToLose * 7700;
++  const dailyDeficit = maintenanceCalories - deficitCalories;
++  const daysNeeded = totalCaloriesNeeded / dailyDeficit;
++
++  document.getElementById("result").innerHTML = `
++    <h2>计算结果</h2>
++    BMI：<b>${bmi.toFixed(1)}</b>（${bmiLevel}）<br>
++    维持热量：<b>${Math.round(maintenanceCalories)} kcal/天</b><br>
++    减脂建议摄入：<b>${Math.round(deficitCalories)} kcal/天</b><br>
++    蛋白质建议：<b>${Math.round(proteinGram)} g/天</b><br>
++    脂肪建议：<b>${Math.round(fatFloorCalories / 9)} g/天起</b><br>
++    目标减重：<b>${weightToLose.toFixed(1)} kg</b><br>
++    预计周期：<b>${Math.round(daysNeeded)} 天</b>
++
++    <h2>碳循环周表</h2>
++    <table>
++      <thead>
++        <tr>
++          <th>日期</th>
++          <th>总热量</th>
++          <th>碳水占比</th>
++          <th>建议碳水</th>
++          <th>建议蛋白质</th>
++          <th>建议脂肪</th>
++        </tr>
++      </thead>
++      <tbody>${rows}</tbody>
++    </table>
++    <p class="muted">提示：以上为估算值，请结合训练与体重周均变化每2周微调一次摄入。</p>
++  `;
++}
++</script>
++</body>
++</html>
+ 
+EOF
+)
