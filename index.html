@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>BMI & 减脂计算器</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #4facfe;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00c6ff;
+}
+
+.result {
+  margin-top: 20px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>BMI & 减脂管理工具</h1>
+
+<label>身高 (cm)
+<input id="height" type="number" />
+</label>
+
+<label>当前体重 (kg)
+<input id="weight" type="number" />
+</label>
+
+<label>目标体重 (kg)
+<input id="targetWeight" type="number" />
+</label>
+
+<label>年龄
+<input id="age" type="number" />
+</label>
+
+<label>性别
+<select id="gender">
+  <option value="male">男</option>
+  <option value="female">女</option>
+</select>
+</label>
+
+<button onclick="calculate()">开始计算</button>
+
+<div class="result" id="result"></div>
+</div>
+
+<script>
+function calculate() {
+  const height = parseFloat(document.getElementById("height").value);
+  const weight = parseFloat(document.getElementById("weight").value);
+  const targetWeight = parseFloat(document.getElementById("targetWeight").value);
+  const age = parseFloat(document.getElementById("age").value);
+  const gender = document.getElementById("gender").value;
+
+  if (!height || !weight || !targetWeight || !age) {
+    document.getElementById("result").innerText = "请填写完整信息";
+    return;
+  }
+
+  const bmi = weight / ((height / 100) ** 2);
+
+  let bmr;
+  if (gender === "male") {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  const maintenanceCalories = bmr * 1.55;
+  const deficitCalories = maintenanceCalories - 500;
+
+  const weightToLose = weight - targetWeight;
+  const totalCaloriesNeeded = weightToLose * 7700;
+  const daysNeeded = totalCaloriesNeeded / 500;
+
+  document.getElementById("result").innerHTML =
+    "BMI: " + bmi.toFixed(1) + "<br>" +
+    "维持热量: " + Math.round(maintenanceCalories) + " kcal<br>" +
+    "建议每日摄入: " + Math.round(deficitCalories) + " kcal<br>" +
+    "需要减重: " + weightToLose.toFixed(1) + " kg<br>" +
+    "预计天数: " + Math.round(daysNeeded) + " 天";
+}
+</script>
+
+</body>
+</html>
